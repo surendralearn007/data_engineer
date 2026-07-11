@@ -1,0 +1,22 @@
+{
+	"name": "Azure_storage_SOURCE",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "Sheet1",
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "emp_Details.xlsx",
+				"folderPath": "raw",
+				"fileSystem": "adfblob"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": []
+	}
+}
