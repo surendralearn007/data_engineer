@@ -15,7 +15,7 @@
 				"folderPath": "transform",
 				"fileSystem": "adfblob"
 			},
-			"firstRowAsHeader": false
+			"firstRowAsHeader": true
 		},
 		"schema": []
 	}
