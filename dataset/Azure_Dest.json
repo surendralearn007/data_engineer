@@ -8,9 +8,10 @@
 		"annotations": [],
 		"type": "Excel",
 		"typeProperties": {
+			"sheetName": "Sheet1",
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "EmpDetails",
+				"fileName": "empDetails.xlsx",
 				"folderPath": "transform",
 				"fileSystem": "adfblob"
 			},
