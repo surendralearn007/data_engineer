@@ -8,6 +8,9 @@
 		"parameters": {
 			"source": {
 				"type": "string"
+			},
+			"dest": {
+				"type": "string"
 			}
 		},
 		"annotations": [],
