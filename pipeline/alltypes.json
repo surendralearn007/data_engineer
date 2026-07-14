@@ -102,7 +102,10 @@
 									"referenceName": "types_dynamic",
 									"type": "DatasetReference",
 									"parameters": {
-										"folder": "@concat('Tran\\',last(split(item().name,'.')))",
+										"folder": {
+											"value": "@concat('Tran/',last(split(item().name,'.')))",
+											"type": "Expression"
+										},
 										"file": {
 											"value": "@item().name",
 											"type": "Expression"
