@@ -6,10 +6,10 @@
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
-			"source": {
+			"folder": {
 				"type": "string"
 			},
-			"dest": {
+			"file": {
 				"type": "string"
 			}
 		},
@@ -18,6 +18,14 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().file",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().folder",
+					"type": "Expression"
+				},
 				"fileSystem": "adfblob"
 			},
 			"columnDelimiter": ",",
