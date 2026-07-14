@@ -62,16 +62,298 @@
 								},
 								"cases": [
 									{
-										"value": "Case1"
+										"value": "Case1",
+										"activities": [
+											{
+												"name": "xlsx",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "BinarySource",
+														"storeSettings": {
+															"type": "AzureBlobFSReadSettings",
+															"recursive": true
+														},
+														"formatSettings": {
+															"type": "BinaryReadSettings"
+														}
+													},
+													"sink": {
+														"type": "BinarySink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings"
+														}
+													},
+													"enableStaging": false
+												},
+												"inputs": [
+													{
+														"referenceName": "types_dynamic",
+														"type": "DatasetReference",
+														"parameters": {
+															"folder": "allraw",
+															"file": "@item().name"
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "types_dynamic",
+														"type": "DatasetReference",
+														"parameters": {
+															"folder": "tran/xlsx",
+															"file": {
+																"value": "@item().name",
+																"type": "Expression"
+															}
+														}
+													}
+												]
+											}
+										]
 									},
 									{
-										"value": "Case2"
+										"value": "Case2",
+										"activities": [
+											{
+												"name": "json",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "BinarySource",
+														"storeSettings": {
+															"type": "AzureBlobFSReadSettings",
+															"recursive": true
+														},
+														"formatSettings": {
+															"type": "BinaryReadSettings"
+														}
+													},
+													"sink": {
+														"type": "BinarySink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings"
+														}
+													},
+													"enableStaging": false
+												},
+												"inputs": [
+													{
+														"referenceName": "types_dynamic",
+														"type": "DatasetReference",
+														"parameters": {
+															"folder": "allraw",
+															"file": {
+																"value": "@item().name",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "types_dynamic",
+														"type": "DatasetReference",
+														"parameters": {
+															"folder": "tran/json",
+															"file": {
+																"value": "@item().name",
+																"type": "Expression"
+															}
+														}
+													}
+												]
+											}
+										]
 									},
 									{
-										"value": "Case3"
+										"value": "Case3",
+										"activities": [
+											{
+												"name": "csv",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "BinarySource",
+														"storeSettings": {
+															"type": "AzureBlobFSReadSettings",
+															"recursive": true
+														},
+														"formatSettings": {
+															"type": "BinaryReadSettings"
+														}
+													},
+													"sink": {
+														"type": "BinarySink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings"
+														}
+													},
+													"enableStaging": false
+												},
+												"inputs": [
+													{
+														"referenceName": "types_dynamic",
+														"type": "DatasetReference",
+														"parameters": {
+															"folder": "allraw",
+															"file": "@item().name"
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "types_dynamic",
+														"type": "DatasetReference",
+														"parameters": {
+															"folder": "tran/csv",
+															"file": "@item().name"
+														}
+													}
+												]
+											}
+										]
 									},
 									{
-										"value": "Case4"
+										"value": "Case4",
+										"activities": [
+											{
+												"name": "txt",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "BinarySource",
+														"storeSettings": {
+															"type": "AzureBlobFSReadSettings",
+															"recursive": true
+														},
+														"formatSettings": {
+															"type": "BinaryReadSettings"
+														}
+													},
+													"sink": {
+														"type": "BinarySink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings"
+														}
+													},
+													"enableStaging": false
+												},
+												"inputs": [
+													{
+														"referenceName": "types_dynamic",
+														"type": "DatasetReference",
+														"parameters": {
+															"folder": "allraw",
+															"file": "@item().name"
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "types_dynamic",
+														"type": "DatasetReference",
+														"parameters": {
+															"folder": "tran/txt",
+															"file": "@item().name"
+														}
+													}
+												]
+											}
+										]
+									}
+								],
+								"defaultActivities": [
+									{
+										"name": "default",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "BinarySource",
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": true
+												},
+												"formatSettings": {
+													"type": "BinaryReadSettings"
+												}
+											},
+											"sink": {
+												"type": "BinarySink",
+												"storeSettings": {
+													"type": "AzureBlobFSWriteSettings"
+												}
+											},
+											"enableStaging": false
+										},
+										"inputs": [
+											{
+												"referenceName": "types_dynamic",
+												"type": "DatasetReference",
+												"parameters": {
+													"folder": "allraw",
+													"file": {
+														"value": "@item().name",
+														"type": "Expression"
+													}
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "types_dynamic",
+												"type": "DatasetReference",
+												"parameters": {
+													"folder": "tran/others",
+													"file": "@item().name"
+												}
+											}
+										]
 									}
 								]
 							}
