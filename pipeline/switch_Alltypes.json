@@ -62,7 +62,7 @@
 								},
 								"cases": [
 									{
-										"value": "Case1",
+										"value": "xlsx",
 										"activities": [
 											{
 												"name": "xlsx",
@@ -122,7 +122,7 @@
 										]
 									},
 									{
-										"value": "Case2",
+										"value": "json",
 										"activities": [
 											{
 												"name": "json",
@@ -185,7 +185,7 @@
 										]
 									},
 									{
-										"value": "Case3",
+										"value": "csv",
 										"activities": [
 											{
 												"name": "csv",
@@ -242,7 +242,7 @@
 										]
 									},
 									{
-										"value": "Case4",
+										"value": "txt",
 										"activities": [
 											{
 												"name": "txt",
