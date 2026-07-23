@@ -51,6 +51,18 @@
 			"type": "string",
 			"defaultValue": "/subscriptions/af908b0f-420e-44c3-b0a5-7917b9b66667/resourceGroups/ADF/providers/Microsoft.Storage/storageAccounts/adfstorages"
 		},
+		"trigger1_properties_EVENTBASED_parameters_Pfolder": {
+			"type": "string",
+			"defaultValue": "@triggerBody().folderPath"
+		},
+		"trigger1_properties_EVENTBASED_parameters_Pfile": {
+			"type": "string",
+			"defaultValue": "@triggerBody().fileName"
+		},
+		"trigger1_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/af908b0f-420e-44c3-b0a5-7917b9b66667/resourceGroups/ADF/providers/Microsoft.Storage/storageAccounts/adfstorages"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -128,6 +140,15 @@
 					},
 					"csv_auto_properties_typeProperties_scope": {
 						"value": "[parameters('csv_auto_properties_typeProperties_scope')]"
+					},
+					"trigger1_properties_EVENTBASED_parameters_Pfolder": {
+						"value": "[parameters('trigger1_properties_EVENTBASED_parameters_Pfolder')]"
+					},
+					"trigger1_properties_EVENTBASED_parameters_Pfile": {
+						"value": "[parameters('trigger1_properties_EVENTBASED_parameters_Pfile')]"
+					},
+					"trigger1_properties_typeProperties_scope": {
+						"value": "[parameters('trigger1_properties_typeProperties_scope')]"
 					}
 				}
 			},

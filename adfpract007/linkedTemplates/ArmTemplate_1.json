@@ -18,12 +18,165 @@
 		"csv_auto_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/af908b0f-420e-44c3-b0a5-7917b9b66667/resourceGroups/ADF/providers/Microsoft.Storage/storageAccounts/adfstorages"
+		},
+		"trigger1_properties_EVENTBASED_parameters_Pfolder": {
+			"type": "string",
+			"defaultValue": "@triggerBody().folderPath"
+		},
+		"trigger1_properties_EVENTBASED_parameters_Pfile": {
+			"type": "string",
+			"defaultValue": "@triggerBody().fileName"
+		},
+		"trigger1_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/af908b0f-420e-44c3-b0a5-7917b9b66667/resourceGroups/ADF/providers/Microsoft.Storage/storageAccounts/adfstorages"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/if_condition')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Metadata1",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "alltype_getdata",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "BinaryReadSettings"
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Get Metadata1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get Metadata1').output.childItems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "If Condition1",
+									"type": "IfCondition",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@equals(last(split(item().name,'.')),'csv')",
+											"type": "Expression"
+										},
+										"ifTrueActivities": [
+											{
+												"name": "csv",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "BinarySource",
+														"storeSettings": {
+															"type": "AzureBlobFSReadSettings",
+															"recursive": true
+														},
+														"formatSettings": {
+															"type": "BinaryReadSettings"
+														}
+													},
+													"sink": {
+														"type": "BinarySink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings"
+														}
+													},
+													"enableStaging": false
+												},
+												"inputs": [
+													{
+														"referenceName": "types_dynamic",
+														"type": "DatasetReference",
+														"parameters": {
+															"folder": "allraw",
+															"file": {
+																"value": "@item().name",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "types_dynamic",
+														"type": "DatasetReference",
+														"parameters": {
+															"folder": {
+																"value": "@concat('newly/',last(split(item().name,'.' )))",
+																"type": "Expression"
+															},
+															"file": {
+																"value": "@concat(toUpper(first(split(item().name,'.' ))),formatDateTime(utcNow(),'DDMMYYY'),'.csv')",
+																"type": "Expression"
+															}
+														}
+													}
+												]
+											}
+										]
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/metadat6a')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -745,7 +898,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/event trigger')]",
+			"name": "[concat(parameters('factoryName'), '/EVENTBASED')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -801,11 +954,11 @@
 								"type": "DatasetReference",
 								"parameters": {
 									"folder": {
-										"value": "@pipeline().parameters.p_folder",
+										"value": "@pipeline().parameters.Pfolder",
 										"type": "Expression"
 									},
 									"file": {
-										"value": "@pipeline().parameters.p_file",
+										"value": "@pipeline().parameters.Pfile",
 										"type": "Expression"
 									}
 								}
@@ -817,11 +970,11 @@
 								"type": "DatasetReference",
 								"parameters": {
 									"folder": {
-										"value": "@concat('output/',last(split(pipeline().parameters.p_file,'.')))",
+										"value": "@concat('out/',last(split(pipeline().parameters.Pfile,'.')))",
 										"type": "Expression"
 									},
 									"file": {
-										"value": "@pipeline().parameters.p_file",
+										"value": "@pipeline().parameters.Pfile",
 										"type": "Expression"
 									}
 								}
@@ -833,10 +986,10 @@
 					"elapsedTimeMetric": {}
 				},
 				"parameters": {
-					"p_folder": {
+					"Pfolder": {
 						"type": "string"
 					},
-					"p_file": {
+					"Pfile": {
 						"type": "string"
 					}
 				},
@@ -874,8 +1027,40 @@
 					]
 				}
 			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger1')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "EVENTBASED",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"Pfolder": "[parameters('trigger1_properties_EVENTBASED_parameters_Pfolder')]",
+							"Pfile": "[parameters('trigger1_properties_EVENTBASED_parameters_Pfile')]"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/adfblob/blobs/",
+					"blobPathEndsWith": "csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('trigger1_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/event trigger')]"
+				"[concat(variables('factoryId'), '/pipelines/EVENTBASED')]"
 			]
 		}
 	]

@@ -50,6 +50,18 @@
 		"csv_auto_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/af908b0f-420e-44c3-b0a5-7917b9b66667/resourceGroups/ADF/providers/Microsoft.Storage/storageAccounts/adfstorages"
+		},
+		"trigger1_properties_EVENTBASED_parameters_Pfolder": {
+			"type": "string",
+			"defaultValue": "@triggerBody().folderPath"
+		},
+		"trigger1_properties_EVENTBASED_parameters_Pfile": {
+			"type": "string",
+			"defaultValue": "@triggerBody().fileName"
+		},
+		"trigger1_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/af908b0f-420e-44c3-b0a5-7917b9b66667/resourceGroups/ADF/providers/Microsoft.Storage/storageAccounts/adfstorages"
 		}
 	},
 	"variables": {
@@ -289,6 +301,108 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/alltype_getdata')]",
 				"[concat(variables('factoryId'), '/datasets/types_dynamic')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/event trigger')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "sour_dest_event",
+								"type": "DatasetReference",
+								"parameters": {
+									"folder": {
+										"value": "@pipeline().parameters.p_folder",
+										"type": "Expression"
+									},
+									"file": {
+										"value": "@pipeline().parameters.p_file",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "sour_dest_event",
+								"type": "DatasetReference",
+								"parameters": {
+									"folder": {
+										"value": "@concat('output/',last(split(pipeline().parameters.p_file,'.')))",
+										"type": "Expression"
+									},
+									"file": {
+										"value": "@pipeline().parameters.p_file",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"p_folder": {
+						"type": "string"
+					},
+					"p_file": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/sour_dest_event')]"
 			]
 		},
 		{
@@ -1602,6 +1716,49 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/sour_dest_event')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"folder": {
+						"type": "string"
+					},
+					"file": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().file",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().folder",
+							"type": "Expression"
+						},
+						"fileSystem": "adfblob"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/types_dynamic')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1715,7 +1872,41 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/event trigger')]",
+			"name": "[concat(parameters('factoryName'), '/csv_auto')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "event trigger",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"p_folder": "[parameters('csv_auto_properties_event trigger_parameters_p_folder')]",
+							"p_file": "[parameters('csv_auto_properties_event trigger_parameters_p_file')]"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/adfblob/blobs/SQL",
+					"blobPathEndsWith": "csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('csv_auto_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/event trigger')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/EVENTBASED')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1771,11 +1962,11 @@
 								"type": "DatasetReference",
 								"parameters": {
 									"folder": {
-										"value": "@pipeline().parameters.p_folder",
+										"value": "@pipeline().parameters.Pfolder",
 										"type": "Expression"
 									},
 									"file": {
-										"value": "@pipeline().parameters.p_file",
+										"value": "@pipeline().parameters.Pfile",
 										"type": "Expression"
 									}
 								}
@@ -1787,11 +1978,11 @@
 								"type": "DatasetReference",
 								"parameters": {
 									"folder": {
-										"value": "@concat('output/',last(split(pipeline().parameters.p_file,'.')))",
+										"value": "@concat('out/',last(split(pipeline().parameters.Pfile,'.')))",
 										"type": "Expression"
 									},
 									"file": {
-										"value": "@pipeline().parameters.p_file",
+										"value": "@pipeline().parameters.Pfile",
 										"type": "Expression"
 									}
 								}
@@ -1803,10 +1994,10 @@
 					"elapsedTimeMetric": {}
 				},
 				"parameters": {
-					"p_folder": {
+					"Pfolder": {
 						"type": "string"
 					},
-					"p_file": {
+					"Pfile": {
 						"type": "string"
 					}
 				},
@@ -1817,50 +2008,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/sour_dest_event')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureDataLakeStorage1",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"folder": {
-						"type": "string"
-					},
-					"file": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@dataset().file",
-							"type": "Expression"
-						},
-						"folderPath": {
-							"value": "@dataset().folder",
-							"type": "Expression"
-						},
-						"fileSystem": "adfblob"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/csv_auto')]",
+			"name": "[concat(parameters('factoryName'), '/trigger1')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1869,28 +2017,28 @@
 				"pipelines": [
 					{
 						"pipelineReference": {
-							"referenceName": "event trigger",
+							"referenceName": "EVENTBASED",
 							"type": "PipelineReference"
 						},
 						"parameters": {
-							"p_folder": "[parameters('csv_auto_properties_event trigger_parameters_p_folder')]",
-							"p_file": "[parameters('csv_auto_properties_event trigger_parameters_p_file')]"
+							"Pfolder": "[parameters('trigger1_properties_EVENTBASED_parameters_Pfolder')]",
+							"Pfile": "[parameters('trigger1_properties_EVENTBASED_parameters_Pfile')]"
 						}
 					}
 				],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
-					"blobPathBeginsWith": "/adfblob/blobs/SQL",
+					"blobPathBeginsWith": "/adfblob/blobs/",
 					"blobPathEndsWith": "csv",
 					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('csv_auto_properties_typeProperties_scope')]",
+					"scope": "[parameters('trigger1_properties_typeProperties_scope')]",
 					"events": [
 						"Microsoft.Storage.BlobCreated"
 					]
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/event trigger')]"
+				"[concat(variables('factoryId'), '/pipelines/EVENTBASED')]"
 			]
 		}
 	]
