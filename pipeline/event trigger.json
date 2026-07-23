@@ -52,7 +52,10 @@
 						"referenceName": "sour_dest_event",
 						"type": "DatasetReference",
 						"parameters": {
-							"folder": "allraw",
+							"folder": {
+								"value": "@pipeline().parameters.p_folder",
+								"type": "Expression"
+							},
 							"file": {
 								"value": "@pipeline().parameters.p_file",
 								"type": "Expression"
@@ -66,7 +69,11 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"folder": {
-								"value": "@pipeline().parameters.p_folder",
+								"value": "@concat('output/',last(split(pipeline().parameters.p_file,'.')))",
+								"type": "Expression"
+							},
+							"file": {
+								"value": "@pipeline().parameters.p_file",
 								"type": "Expression"
 							}
 						}
