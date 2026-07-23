@@ -41,11 +41,11 @@
 		},
 		"csv_auto_properties_event trigger_parameters_p_folder": {
 			"type": "string",
-			"defaultValue": "@triggerBody().folderpath"
+			"defaultValue": "@triggerBody().folderPath"
 		},
 		"csv_auto_properties_event trigger_parameters_p_file": {
 			"type": "string",
-			"defaultValue": "@triggerBody().filename"
+			"defaultValue": "@triggerBody().fileName"
 		},
 		"csv_auto_properties_typeProperties_scope": {
 			"type": "string",
@@ -1880,7 +1880,7 @@
 				],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
-					"blobPathBeginsWith": "/adfblob/blobs/",
+					"blobPathBeginsWith": "/adfblob/blobs/SQL",
 					"blobPathEndsWith": "csv",
 					"ignoreEmptyBlobs": true,
 					"scope": "[parameters('csv_auto_properties_typeProperties_scope')]",

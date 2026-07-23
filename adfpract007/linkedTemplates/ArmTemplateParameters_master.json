@@ -30,10 +30,10 @@
 			"value": "sqladmin"
 		},
 		"csv_auto_properties_event trigger_parameters_p_folder": {
-			"value": "@triggerBody().folderpath"
+			"value": "@triggerBody().folderPath"
 		},
 		"csv_auto_properties_event trigger_parameters_p_file": {
-			"value": "@triggerBody().filename"
+			"value": "@triggerBody().fileName"
 		},
 		"csv_auto_properties_typeProperties_scope": {
 			"value": "/subscriptions/af908b0f-420e-44c3-b0a5-7917b9b66667/resourceGroups/ADF/providers/Microsoft.Storage/storageAccounts/adfstorages"
