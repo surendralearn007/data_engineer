@@ -8,8 +8,35 @@
 		"AzureDataLakeStorage1_accountKey": {
 			"value": ""
 		},
+		"AzureDataLakeStorage2_accountKey": {
+			"value": ""
+		},
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"value": "https://adfstorages.dfs.core.windows.net/"
+		},
+		"AzureDataLakeStorage2_properties_typeProperties_url": {
+			"value": "https://adfstorages.dfs.core.windows.net/"
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://sqlkeydb1.vault.azure.net/"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_server": {
+			"value": "adfsqlserver-1.database.windows.net"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_database": {
+			"value": "sqldb"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"value": "sqladmin"
+		},
+		"csv_auto_properties_event trigger_parameters_p_folder": {
+			"value": "@triggerBody().folderpath"
+		},
+		"csv_auto_properties_event trigger_parameters_p_file": {
+			"value": "@triggerBody().filename"
+		},
+		"csv_auto_properties_typeProperties_scope": {
+			"value": "/subscriptions/af908b0f-420e-44c3-b0a5-7917b9b66667/resourceGroups/ADF/providers/Microsoft.Storage/storageAccounts/adfstorages"
 		},
 		"containerUri": {
 			"value": ""
