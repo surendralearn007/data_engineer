@@ -39,7 +39,7 @@
 			"value": "/subscriptions/af908b0f-420e-44c3-b0a5-7917b9b66667/resourceGroups/ADF/providers/Microsoft.Storage/storageAccounts/adfstorages"
 		},
 		"trigger1_properties_EVENTBASED_parameters_Pfolder": {
-			"value": "@triggerBody().folderPath"
+			"value": "@replace(triggerBody().folderPath,'adfblob/','')"
 		},
 		"trigger1_properties_EVENTBASED_parameters_Pfile": {
 			"value": "@triggerBody().fileName"

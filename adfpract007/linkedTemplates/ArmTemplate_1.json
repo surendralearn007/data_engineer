@@ -21,7 +21,7 @@
 		},
 		"trigger1_properties_EVENTBASED_parameters_Pfolder": {
 			"type": "string",
-			"defaultValue": "@triggerBody().folderPath"
+			"defaultValue": "@replace(triggerBody().folderPath,'adfblob/','')"
 		},
 		"trigger1_properties_EVENTBASED_parameters_Pfile": {
 			"type": "string",
